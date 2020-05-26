@@ -23,7 +23,7 @@ There are some tags that have a different id for the tag.
 # Get the data for the main stats of all the servants 
 def servant_stats(soup,servant_data):
  
- servant_class = soup.find('p',{'class':'ServantInfoClass'})
+ servant_class = soup.find('div',{'class':'ServantInfoClass'})
  s_class = servant_class.find('a')['title']
  servant_data.append(s_class)
 

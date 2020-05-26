@@ -72,6 +72,16 @@ def format_dataframe(stats_df,serv_df):
 
         # Remove Hyde from the Database (could have done this earlier but eh....) because Jekyll/Hyde already exists
         new_df = new_df[new_df['Servant Name'] != 'Hyde'].reset_index(drop=True)
+
+        # Convert numeric text in dataframe to integer values
+        numeric_lists = [
+            'ATK at level 1','ATK at max Servant level','HP at level 1','HP at max Servant level',
+            'Grail ATK','Grail HP']
+
+        for i in numeric_lists:
+            new_df[i] = new_df[i].apply(lambda x: x.split()[0].replace(',',''))
+            new_df[i] = new_df[i].apply(pd.to_numeric)
+        
         # Create the new dataset in .csv,.xlsx and .json
         new_df.to_csv(os.path.join(os.getcwd(),'Total Servant Database.csv'),encoding='utf-8-sig')
         new_df.to_excel(os.path.join(os.getcwd(),'Total Servant Database.xlsx'))
