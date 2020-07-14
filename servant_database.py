@@ -9,6 +9,7 @@ from tqdm import tqdm
 pd.options.mode.chained_assignment = None
 # Range of Servant IDs
 id_count = ['1-100','101-200','201-300']
+#id_count = ['1-100']
 
 class ServantDB:
     
@@ -63,7 +64,7 @@ class ServantDB:
         if (os.path.exists(d_link) == True):
             # File already exists ? Get the length and compare it with the newly retrieved dataframe
             check_df = pd.read_csv(d_link,encoding='utf-8-sig')
-            old_len = len(check_df) + 1                             #Hyde is a duplicate of Jekyll and Hyde,so Hyde is removed in the existing dataset file
+            old_len = len(check_df['ID'].unique()) + 1                            #Hyde is a duplicate of Jekyll and Hyde,so Hyde is removed in the existing dataset file
         else :
             # Create the servant database as the file does not exist
             print('Created Servant Database\n')
@@ -73,7 +74,7 @@ class ServantDB:
             # If the size of the old and new dataframe are same, no need to update it
             print('Servant Database is already updated')
             return True,df
-        elif new_len > old_len :
+        elif ((new_len > old_len)|(new_len < old_len)) :
             # Delete the old file and make a new one
             print('Created an updated Servant Database')
             os.remove(os.path.join(os.getcwd(),'Total Servant Database.csv'))

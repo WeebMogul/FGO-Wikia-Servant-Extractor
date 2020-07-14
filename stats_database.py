@@ -8,16 +8,14 @@ from tqdm import tqdm
 pd.options.mode.chained_assignment = None
 
 # Columns for the Servant Stats
-keys = ['Class ', 'Japanese Name', 'AKA', 'ID', 'Cost','ATK','HP','Grail ATK','Grail HP','Voice Actor','Illustrator','Attribute', 'Growth Curve','Star Absorption', 
+keys = ['Class', 'Japanese Name', 'AKA', 'ID', 'Cost','ATK','HP','Grail ATK','Grail HP','Voice Actor','Illustrator','Attribute', 'Growth Curve','Star Absorption', 
 'Star Generation','NP Charge ATK','NP Charge DEF','Death Rate', 'Alignments','Gender', 'Traits', 'Card Order', 'Quick Hits ', 'Arts Hits ', 'Buster Hits ', 'Extra Hits ', 
 'Rank ', 'Classification ', 'Type ', 'Hit-Count ',]
 
 '''
 Functions such as servant_stats(),servant_card_trait(),servant_np_stats() have similar functionality :
-
 Extract data from given tags and tables next to those tags. 
 There are some tags that have a different id for the tag. 
-
 '''
 
 # Get the data for the main stats of all the servants 
@@ -35,9 +33,28 @@ def servant_stats(soup,servant_data):
  for row in stat_table_row:
     stats = row.find_all('td')
 
-    for i in stats:
-        stat_text = i.text.strip()
-        servant_data.append(re.sub(r'^(.*?):',' ',stat_text))
+    if row.find('th'):
+        img_link = row.find('th')
+        card_order = img_link.find('img')['alt']
+        servant_data.append(card_order)
+    else :
+        for i in stats:
+
+            if i.find_all('span',{'class':'InumMobileDisplay'}):
+
+                tsd = i.text
+                tsd = re.sub('\([^().]*\)|Hits:|  |  | ','',tsd).strip()
+                tsd = tsd.split('|')
+                tsd = [int(int(num)/11) for num in tsd]
+
+                for j in range(0,4):
+                    servant_data.append(tsd[j])
+            
+            else :
+                stat_text = i.text.strip()
+                servant_data.append(re.sub(r'^(.*?):',' ',stat_text))
+        # print(stat_text)
+    
 
 # Get the data for the Card order, traits and the number of hits for each card
 def servant_card_trait(soup,servant_data):
@@ -125,7 +142,7 @@ class StatsDB:
 
                 # Called functions
                 servant_stats(soup,servant_data)
-                servant_card_trait(soup,servant_data)
+                #servant_card_trait(soup,servant_data)
                 servant_np_stats(soup,servant_data)
 
                 # Append the given servant data to another list (reshaping is another option but eh....this also works too)
@@ -133,14 +150,7 @@ class StatsDB:
 
                 # Create the servant stats dataframe and strip whitespace fromt 
             df = pd.DataFrame(total_servant_data,columns=keys)
-            df = df.apply(lambda x : x.str.strip())
+            df = df.astype(str).apply(lambda x : x.str.strip())
             return df
+            #print(df)
             #df.to_csv(os.path.join(os.getcwd(),'Servant Stats.csv'),encoding='utf-8')
-
-
-
-
-
-
-
-
