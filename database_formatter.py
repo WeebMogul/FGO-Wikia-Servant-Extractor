@@ -126,9 +126,11 @@ def format_dataframe(stats_df,serv_df):
         for i in numeric_lists:
             new_df[i] = new_df[i].apply(lambda x: x.split()[0].replace(',',''))
             new_df[i] = new_df[i].apply(pd.to_numeric)
-
+        
         new_df = update_dual_values(new_df)
 
+        new_df = new_df[new_df['ID'] != 149]
+        
         # Create the new dataset in .csv,.xlsx and .json
         new_df.to_csv(os.path.join(os.getcwd(),'Total Servant Database.csv'),index=False,encoding='utf-8-sig')
         new_df.to_excel(os.path.join(os.getcwd(),'Total Servant Database.xlsx'),index=False)
