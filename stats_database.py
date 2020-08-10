@@ -9,15 +9,15 @@ pd.options.mode.chained_assignment = None
 
 # Columns for the Servant Stats
 keys = ['Class', 'Japanese Name', 'AKA', 'ID', 'Cost','ATK','HP','Grail ATK','Grail HP','Voice Actor','Illustrator','Attribute', 'Growth Curve','Star Absorption', 
-'Star Generation','NP Charge ATK','NP Charge DEF','Death Rate', 'Alignments','Gender', 'Traits', 'Card Order', 'Quick Hits ', 'Arts Hits ', 'Buster Hits ', 'Extra Hits ', 
-'Rank ', 'Classification ', 'Type ', 'Hit-Count ',]
+'Star Generation','NP Charge ATK','NP Charge DEF','Death Rate', 'Alignments','Gender', 'Traits', 'Card Order', 'Quick Hits', 'Arts Hits', 'Buster Hits', 'Extra Hits', 
+'NP Damage Type','NP Rank', 'NP Classification','NP Hit-Count']
 
 '''
 Functions such as servant_stats(),servant_card_trait(),servant_np_stats() have similar functionality :
 Extract data from given tags and tables next to those tags. 
 There are some tags that have a different id for the tag. 
 '''
-
+print(len(keys))
 # Get the data for the main stats of all the servants 
 def servant_stats(soup,servant_data):
  
@@ -101,10 +101,28 @@ def servant_np_stats(soup,servant_data):
    
    np_values_rows = servant_np_table.find_all('tr')[1]
 
-   for i in range(0,4):
+   np_atk_type = servant_np_table.find_all('img',alt=True)[0]
+   servant_data.append(np_atk_type['alt'])
 
-       values = np_values_rows.find_all('td')[i].text
-       servant_data.append(values.strip())
+   if len(np_values_rows) >= 4:
+
+       for i in range(0,3):
+
+           values = np_values_rows.find_all('td')[i].text
+           servant_data.append(values.strip())
+   
+   elif len(np_values_rows) < 4:
+
+       np_values_rows_2 = servant_np_table.find_all('tr')[3]
+       np_values_row = str(np_values_rows) + str(np_values_rows_2)
+
+       np_values_row_html = BeautifulSoup(np_values_row,'html.parser')
+
+       for i in range(0,3):
+
+           values = np_values_row_html.find_all('td')[i].text
+           # print(values)
+           servant_data.append(values.strip())
 
 class StatsDB:
     
@@ -150,7 +168,8 @@ class StatsDB:
 
                 # Create the servant stats dataframe and strip whitespace fromt 
             df = pd.DataFrame(total_servant_data,columns=keys)
-            df = df.astype(str).apply(lambda x : x.str.strip())
+            df = df.astype(str).apply(lambda x : x.str.strip()) 
+            #df.to_csv(os.path.join(os.getcwd(),'Servant Stats.csv'),encoding='utf-8')
             return df
             #print(df)
-            #df.to_csv(os.path.join(os.getcwd(),'Servant Stats.csv'),encoding='utf-8')
+           

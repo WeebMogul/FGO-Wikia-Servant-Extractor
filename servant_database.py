@@ -42,7 +42,7 @@ class ServantDB:
                 self.ids.append(data[3].text.strip())
                 self.rarities.append(data[2].text.strip())
         
-        corr_rarity = {'★ ★ ★':'3-Star','★ ★ ★ ★ ★':'5-star','★ ★ ★ ★':'4-Star','★ ★':'2-Star','★':'1-Star','—':'2-Star'}
+        corr_rarity = {'★ ★ ★':'3-Star','★ ★ ★ ★ ★':'5-Star','★ ★ ★ ★':'4-Star','★ ★':'2-Star','★':'1-Star','—':'2-Star'}
         
         # Create the dataframe and store the data in it.
         data = {'Servant Name' : self.names, 'ID' : self.ids, 'Rarity' : self.rarities}

@@ -5,8 +5,8 @@ import numpy as np
 pd.options.mode.chained_assignment = None
 
 keys = ['Class', 'Japanese Name', 'AKA', 'ID', 'Cost','ATK at level 1','ATK at max Servant level','HP at level 1','HP at max Servant level','Grail ATK','Grail HP','Voice Actor','Illustrator','Attribute', 'Growth Curve','Star Absorption', 
-'Star Generation','NP Charge ATK','NP Charge DEF','Death Rate', 'Alignments','Gender', 'Traits', 'Card Order', 'Quick Hits ', 'Arts Hits ', 'Buster Hits ', 'Extra Hits ', 
-'Rank ', 'Classification ', 'Type ', 'Hit-Count ']
+'Star Generation','NP Charge ATK','NP Charge DEF','Death Rate', 'Alignments','Gender', 'Traits', 'Card Order', 'Quick Hits', 'Arts Hits', 'Buster Hits', 'Extra Hits', 
+'NP Rank', 'NP Classification','NP Damage Type','NP Hit-Count']
 
 
 def update_dual_values(df):
@@ -129,7 +129,8 @@ def format_dataframe(stats_df,serv_df):
         
         new_df = update_dual_values(new_df)
 
-        new_df = new_df[new_df['ID'] != 149]
+        new_df = new_df[new_df['Class'] != 'Beast II']
+        new_df = new_df[new_df['Servant Name'] != 'Solomon']
         
         # Create the new dataset in .csv,.xlsx and .json
         new_df.to_csv(os.path.join(os.getcwd(),'Total Servant Database.csv'),index=False,encoding='utf-8-sig')
