@@ -64,7 +64,7 @@ class ServantDB:
         if (os.path.exists(d_link) == True):
             # File already exists ? Get the length and compare it with the newly retrieved dataframe
             check_df = pd.read_csv(d_link,encoding='utf-8-sig')
-            old_len = len(check_df['ID'].unique()) + 1                            #Hyde is a duplicate of Jekyll and Hyde,so Hyde is removed in the existing dataset file
+            old_len = len(check_df['ID'].unique()) + 3                            #Hyde is a duplicate of Jekyll and Hyde,so Hyde is removed in the existing dataset file
         else :
             # Create the servant database as the file does not exist
             print('Created Servant Database\n')
