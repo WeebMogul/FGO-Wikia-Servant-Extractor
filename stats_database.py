@@ -17,7 +17,7 @@ Functions such as servant_stats(),servant_card_trait(),servant_np_stats() have s
 Extract data from given tags and tables next to those tags. 
 There are some tags that have a different id for the tag. 
 '''
-print(len(keys))
+
 # Get the data for the main stats of all the servants 
 def servant_stats(soup,servant_data):
  

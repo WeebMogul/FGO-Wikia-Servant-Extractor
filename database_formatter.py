@@ -91,8 +91,17 @@ def format_dataframe(stats_df,serv_df):
         df2 = stats_df.append(temp_df)    
        
         # Convert text numbers to numeric data and sort values by ID
+
+        # df2['ID'] = df2['ID'].apply(lambda x : re.sub(r'', ,x))
+
         df2.update(df2.apply(pd.to_numeric,errors='coerce'))
-        df2 = df2.sort_values(by=['ID'])
+
+        '''
+        # df2['ID'] = df2['ID'].apply(lambda x : x.str.strip())
+        #df2['ID'] = df2['ID'].apply(lambda x : int(float(str(x.strip))))
+        #df2 = df2.sort_values(by='ID')
+        '''
+        
         # Split the ATK and HP data into 2 different columns (Level 1 and max level)
         df2['ATK'] = df2['ATK'].apply(lambda x: re.sub(r'  (.*)','',x))
         atk = df2['ATK'].str.split('/',n=1,expand=True)
