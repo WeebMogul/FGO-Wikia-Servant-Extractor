@@ -1,6 +1,6 @@
 import stats_database as ssdb
 import database_formatter
-import servant_database as stdb
+import servant_name_id_database as stdb
 
 if __name__ == "__main__":
     

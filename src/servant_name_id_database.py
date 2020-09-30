@@ -9,7 +9,7 @@ from tqdm import tqdm
 pd.options.mode.chained_assignment = None
 # Range of Servant IDs
 id_count = ['1-100','101-200','201-300']
-#id_count = ['1-100']
+#id_count = ['201-300']
 
 class ServantDB:
     

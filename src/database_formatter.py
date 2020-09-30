@@ -79,6 +79,7 @@ def format_dataframe(stats_df,serv_df):
         # Replace the original column names with the new column names
         mod_columns = dict(zip(orig_columns,new_columns))
         temp_df = temp_df.rename(columns=mod_columns)
+        
 
         # Drop the Throwaway_data columns
         temp_df = temp_df[temp_df.columns[:-1]]
@@ -89,18 +90,15 @@ def format_dataframe(stats_df,serv_df):
 
         # Append the modified dataframe with the original dataframe 
         df2 = stats_df.append(temp_df)    
-       
+        
         # Convert text numbers to numeric data and sort values by ID
 
-        # df2['ID'] = df2['ID'].apply(lambda x : re.sub(r'', ,x))
-
         df2.update(df2.apply(pd.to_numeric,errors='coerce'))
-
-        '''
-        # df2['ID'] = df2['ID'].apply(lambda x : x.str.strip())
-        #df2['ID'] = df2['ID'].apply(lambda x : int(float(str(x.strip))))
-        #df2 = df2.sort_values(by='ID')
-        '''
+        
+#        df2['ID'] = df2['ID'].apply(lambda x : x.str.strip())
+#        df2['ID'] = df2['ID'].apply(lambda x : int(float(str(x.strip))))
+        df2 = df2.sort_values(by='ID')
+        
         
         # Split the ATK and HP data into 2 different columns (Level 1 and max level)
         df2['ATK'] = df2['ATK'].apply(lambda x: re.sub(r'  (.*)','',x))
@@ -118,9 +116,12 @@ def format_dataframe(stats_df,serv_df):
 
         # DataFrame is arranged based on column order from the keys list
         df2 = df2[keys]
+
         serv_df.update(serv_df.apply(pd.to_numeric,errors='coerce'))
+
         # Merge the Servant Database and Stats Database based on ID
-        new_df = pd.merge(serv_df,df2,on='ID')
+        # print(df2['ID'])
+        new_df = pd.merge(serv_df,df2,on='ID',how='inner')
         # Drop any duplicates
         new_df = new_df.drop_duplicates(subset='Servant Name')
 
@@ -136,7 +137,7 @@ def format_dataframe(stats_df,serv_df):
             new_df[i] = new_df[i].apply(lambda x: x.split()[0].replace(',',''))
             new_df[i] = new_df[i].apply(pd.to_numeric)
         
-        new_df = update_dual_values(new_df)
+        #new_df = update_dual_values(new_df)
 
         new_df = new_df[new_df['Class'] != 'Beast II']
         new_df = new_df[new_df['Servant Name'] != 'Solomon']
