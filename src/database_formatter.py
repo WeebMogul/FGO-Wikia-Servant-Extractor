@@ -94,9 +94,6 @@ def format_dataframe(stats_df,serv_df):
         # Convert text numbers to numeric data and sort values by ID
 
         df2.update(df2.apply(pd.to_numeric,errors='coerce'))
-        
-#        df2['ID'] = df2['ID'].apply(lambda x : x.str.strip())
-#        df2['ID'] = df2['ID'].apply(lambda x : int(float(str(x.strip))))
         df2 = df2.sort_values(by='ID')
         
         
@@ -137,7 +134,7 @@ def format_dataframe(stats_df,serv_df):
             new_df[i] = new_df[i].apply(lambda x: x.split()[0].replace(',',''))
             new_df[i] = new_df[i].apply(pd.to_numeric)
         
-        #new_df = update_dual_values(new_df)
+        new_df = update_dual_values(new_df)
 
         new_df = new_df[new_df['Class'] != 'Beast II']
         new_df = new_df[new_df['Servant Name'] != 'Solomon']
