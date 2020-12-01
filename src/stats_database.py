@@ -100,28 +100,38 @@ def servant_np_stats(soup,servant_data):
    servant_np_table = servant_np.find_next('table')
    
    np_values_rows = servant_np_table.find_all('tr')[1]
+   print("\n")
+   print(np_values_rows)
 
    np_atk_type = servant_np_table.find_all('img',alt=True)[0]
    servant_data.append(np_atk_type['alt'])
 
-   if len(np_values_rows) >= 4:
-
-       for i in range(0,3):
-
-           values = np_values_rows.find_all('td')[i].text
-           servant_data.append(values.strip())
-   
-   elif len(np_values_rows) < 4:
+   if len(np_values_rows) == 4:
 
        np_values_rows_2 = servant_np_table.find_all('tr')[3]
        np_values_row = str(np_values_rows) + str(np_values_rows_2)
 
        np_values_row_html = BeautifulSoup(np_values_row,'html.parser')
 
+       print(np_values_row_html)
+
        for i in range(0,3):
 
            values = np_values_row_html.find_all('td')[i].text
-           # print(values)
+           #print(values)
+           servant_data.append(values.strip())
+   
+   elif len(np_values_rows) == 6:
+
+       np_values_rows_4 = servant_np_table.find_all('tr')[3]
+       np_values_row_2 = str(np_values_rows) + str(np_values_rows_4)
+
+       np_values_row_html_2 = BeautifulSoup(np_values_row_2,'html.parser')
+
+       for i in range(0,3):
+
+           values = np_values_row_html_2.find_all('td')[i].text
+           print(values)
            servant_data.append(values.strip())
 
 class StatsDB:

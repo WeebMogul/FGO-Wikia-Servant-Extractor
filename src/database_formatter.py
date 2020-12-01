@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import re
 import numpy as np
+from openpyxl import load_workbook
 pd.options.mode.chained_assignment = None
 
 keys = ['Class', 'Japanese Name', 'AKA', 'ID', 'Cost','ATK at level 1','ATK at max Servant level','HP at level 1','HP at max Servant level','Grail ATK','Grail HP','Voice Actor','Illustrator','Attribute', 'Growth Curve','Star Absorption', 
@@ -54,7 +55,8 @@ def update_dual_values(df):
 
 def format_dataframe(stats_df,serv_df):
 
-    stat_path_state = os.path.exists(os.path.join(os.getcwd(),'Total Servant Database.csv'))
+    #stat_path_state = os.path.exists(os.path.join(os.getcwd(),'Total Servant Database.csv'))
+    stat_path_state = False
 
     if stat_path_state == True:
         print('No need of formatting. Database is already updated to current time')
@@ -133,12 +135,12 @@ def format_dataframe(stats_df,serv_df):
         for i in numeric_lists:
             new_df[i] = new_df[i].apply(lambda x: x.split()[0].replace(',',''))
             new_df[i] = new_df[i].apply(pd.to_numeric)
-        
+
         new_df = update_dual_values(new_df)
 
         new_df = new_df[new_df['Class'] != 'Beast II']
         new_df = new_df[new_df['Servant Name'] != 'Solomon']
-        
+
         # Create the new dataset in .csv,.xlsx and .json
         new_df.to_csv(os.path.join(os.getcwd(),'Total Servant Database.csv'),index=False,encoding='utf-8-sig')
         new_df.to_excel(os.path.join(os.getcwd(),'Total Servant Database.xlsx'),index=False)
