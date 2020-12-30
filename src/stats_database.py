@@ -100,8 +100,8 @@ def servant_np_stats(soup,servant_data):
    servant_np_table = servant_np.find_next('table')
    
    np_values_rows = servant_np_table.find_all('tr')[1]
-   print("\n")
-   print(np_values_rows)
+   #print("\n")
+   #print(np_values_rows)
 
    np_atk_type = servant_np_table.find_all('img',alt=True)[0]
    servant_data.append(np_atk_type['alt'])
@@ -113,7 +113,7 @@ def servant_np_stats(soup,servant_data):
 
        np_values_row_html = BeautifulSoup(np_values_row,'html.parser')
 
-       print(np_values_row_html)
+       #print(np_values_row_html)
 
        for i in range(0,3):
 
@@ -131,7 +131,7 @@ def servant_np_stats(soup,servant_data):
        for i in range(0,3):
 
            values = np_values_row_html_2.find_all('td')[i].text
-           print(values)
+           # print(values)
            servant_data.append(values.strip())
 
 class StatsDB:
