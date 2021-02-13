@@ -9,7 +9,7 @@ from tqdm import tqdm
 pd.options.mode.chained_assignment = None
 # Range of Servant IDs
 id_count = ['1-100','101-200','201-300','301-400']
-#id_count = ['201-300']
+#id_count = ['1-100']
 
 class ServantDB:
     
@@ -47,6 +47,7 @@ class ServantDB:
         # Create the dataframe and store the data in it.
         data = {'Servant Name' : self.names, 'ID' : self.ids, 'Rarity' : self.rarities}
         df = pd.DataFrame(data)
+        
         
         # Remove the non-playable servants from the dataframe 
         df = df.query("ID not in ['151','152','168','240']")

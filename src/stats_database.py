@@ -30,11 +30,12 @@ def servant_stats(soup,servant_data):
 
  stat_table_row = stat_table.find_all('tr')
 
- for row in stat_table_row:
-    stats = row.find_all('td')
+ for i in range(len(stat_table_row)):
+    stats = stat_table_row[i].find_all('td')
+    
 
-    if row.find('th'):
-        img_link = row.find('th')
+    if stat_table_row[i].find('th'):
+        img_link = stat_table_row[i].find('th')
         card_order = img_link.find('img')['alt']
         servant_data.append(card_order)
     else :
@@ -47,11 +48,21 @@ def servant_stats(soup,servant_data):
                 tsd = tsd.split('|')
                 tsd = [int(int(num)/11) for num in tsd]
 
+                #print(tsd)
                 for j in range(0,4):
                     servant_data.append(tsd[j])
             
             else :
-                stat_text = i.text.strip()
+                spx  = i.find_all('span',{'title':"Servant's minimum and maximum attack stat."})
+                spx2  = i.find_all('span',{'title':"Servant's minimum and maximum HP (Health)."})
+                
+                if (len(spx)>0):
+                    stat_text = spx[0].next_sibling
+                elif (len(spx2)>0):
+                    stat_text = spx2[0].next_sibling
+                else :
+                    stat_text = i.text.strip()
+
                 servant_data.append(re.sub(r'^(.*?):',' ',stat_text))
         # print(stat_text)
     
@@ -179,7 +190,7 @@ class StatsDB:
                 # Create the servant stats dataframe and strip whitespace fromt 
             df = pd.DataFrame(total_servant_data,columns=keys)
             df = df.astype(str).apply(lambda x : x.str.strip()) 
-            #df.to_csv(os.path.join(os.getcwd(),'Servant Stats.csv'),encoding='utf-8')
+            # df.to_csv(os.path.join(os.getcwd(),'Servant Stats.csv'),encoding='utf-8')
             return df
             #print(df)
            
