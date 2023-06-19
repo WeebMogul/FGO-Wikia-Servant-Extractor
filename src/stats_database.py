@@ -8,9 +8,7 @@ from tqdm import tqdm
 pd.options.mode.chained_assignment = None
 
 # Columns for the Servant Stats
-keys = ['Class', 'Japanese Name', 'AKA', 'ID', 'Cost','ATK','HP','Grail ATK','Grail HP','Voice Actor','Illustrator','Attribute', 'Growth Curve','Star Absorption', 
-'Star Generation','NP Charge ATK','NP Charge DEF','Death Rate', 'Alignments','Gender', 'Traits', 'Card Order', 'Quick Hits', 'Arts Hits', 'Buster Hits', 'Extra Hits', 
-'NP Damage Type','NP Rank', 'NP Classification','NP Hit-Count']
+keys = ['Class', 'Japanese Name', 'AKA', 'ID', 'Cost','ATK','HP','Lvl 100 Grail ATK','Lvl 100 Grail HP','Lvl 120 Grail ATK','Lvl 120 Grail HP', 'Voice Actor','Illustrator','Attribute', 'Growth Curve','Star Absorption','Star Generation','NP Charge ATK','NP Charge DEF','Death Rate', 'Alignments','Gender', 'Traits', 'Card Order', 'Quick Hits', 'Arts Hits', 'Buster Hits', 'Extra Hits','NP Damage Type','NP Rank', 'NP Classification','NP Hit-Count']
 
 '''
 Functions such as servant_stats(),servant_card_trait(),servant_np_stats() have similar functionality :
@@ -32,7 +30,6 @@ def servant_stats(soup,servant_data):
 
  for i in range(len(stat_table_row)):
     stats = stat_table_row[i].find_all('td')
-    
 
     if stat_table_row[i].find('th'):
         img_link = stat_table_row[i].find('th')
@@ -60,11 +57,27 @@ def servant_stats(soup,servant_data):
                     stat_text = spx[0].next_sibling
                 elif (len(spx2)>0):
                     stat_text = spx2[0].next_sibling
+                # Mash has both stats for lvl 80 and 90 so we remove the 90 for her
+                elif (i.text.strip().find('★ ')!=-1):
+                    stat_text = i.text.strip()
+                    stat_text = stat_text[0:stat_text.find('★ ')]
                 else :
+                    # Process all of the other stats
                     stat_text = i.text.strip()
 
-                servant_data.append(re.sub(r'^(.*?):',' ',stat_text))
-        # print(stat_text)
+                # Some pages list 'Base' in front of ATK stat so remove it
+                if(stat_text and stat_text.find('Base')!= -1):
+                    stat_text = stat_text.replace('Base: ', '')
+
+                # Some servants have additional traits specific to a stage
+                # This messes up the data model so for now remove them
+                remove = False
+                if (stat_text.find('┗')!=-1):
+                    remove = True
+
+                # Add the stat to the servant data
+                if (not remove):
+                    servant_data.append(re.sub(r'^(.*?):',' ',stat_text))
     
 
 # Get the data for the Card order, traits and the number of hits for each card
@@ -168,26 +181,32 @@ class StatsDB:
             total_servant_data = []
 
             for name in tqdm(name_list):
-                servant_data = []
 
-                # Parse name and create url
-                servant_name= urllib.parse.quote(name)
-                url = 'https://fategrandorder.fandom.com/wiki/' + servant_name
+                # Skip Beast_IV because it's an enemy servant only and gives errors
+                if name != 'Beast_IV:_L':
+                    servant_data = []
 
-                # Send link and gather the data
-                reg = Request(url,headers={'User-Agent': 'Mozilla/5.0'})
-                htm = urllib.request.urlopen(reg).read()
-                soup = BeautifulSoup(htm,'lxml')
+                    # Parse name and create url
+                    servant_name= urllib.parse.quote(name)
+                    url = 'https://fategrandorder.fandom.com/wiki/' + servant_name
 
-                # Called functions
-                servant_stats(soup,servant_data)
-                #servant_card_trait(soup,servant_data)
-                servant_np_stats(soup,servant_data)
+                    # Send link and gather the data
+                    reg = Request(url,headers={'User-Agent': 'Mozilla/5.0'})
+                    htm = urllib.request.urlopen(reg).read()
+                    soup = BeautifulSoup(htm,'lxml')
+                    
+                    # Called functions
+                    servant_stats(soup,servant_data)
+                    #servant_card_trait(soup,servant_data)
+                    servant_np_stats(soup,servant_data)
 
-                # Append the given servant data to another list (reshaping is another option but eh....this also works too)
-                total_servant_data.append(servant_data)
+                    # Append the given servant data to another list (reshaping is another option but eh....this also works too)
+                    total_servant_data.append(servant_data)
+                    # print('servant: ', servant_name)
+                    # print('servant data: ', servant_data)
 
-                # Create the servant stats dataframe and strip whitespace fromt 
+                    # Create the servant stats dataframe and strip whitespace fromt 
+
             df = pd.DataFrame(total_servant_data,columns=keys)
             df = df.astype(str).apply(lambda x : x.str.strip()) 
             # df.to_csv(os.path.join(os.getcwd(),'Servant Stats.csv'),encoding='utf-8')

@@ -5,9 +5,7 @@ import numpy as np
 from openpyxl import load_workbook
 pd.options.mode.chained_assignment = None
 
-keys = ['Class', 'Japanese Name', 'AKA', 'ID', 'Cost','ATK at level 1','ATK at max Servant level','HP at level 1','HP at max Servant level','Grail ATK','Grail HP','Voice Actor','Illustrator','Attribute', 'Growth Curve','Star Absorption', 
-'Star Generation','NP Charge ATK','NP Charge DEF','Death Rate', 'Alignments','Gender', 'Traits', 'Card Order', 'Quick Hits', 'Arts Hits', 'Buster Hits', 'Extra Hits', 
-'NP Rank', 'NP Classification','NP Damage Type','NP Hit-Count']
+keys = ['Class', 'Japanese Name', 'AKA', 'ID', 'Cost','ATK at level 1', 'ATK at max Servant level','HP at level 1', 'HP at max Servant level','Lvl 100 Grail ATK','Lvl 100 Grail HP','Lvl 120 Grail ATK','Lvl 120 Grail HP', 'Voice Actor','Illustrator','Attribute', 'Growth Curve','Star Absorption','Star Generation','NP Charge ATK','NP Charge DEF','Death Rate', 'Alignments','Gender', 'Traits', 'Card Order', 'Quick Hits', 'Arts Hits', 'Buster Hits', 'Extra Hits','NP Damage Type','NP Rank', 'NP Classification','NP Hit-Count']
 
 
 def update_dual_values(df):
@@ -45,7 +43,7 @@ def update_dual_values(df):
         cv += 1
 
     df = df[~df['ID'].isin([81, 108])]
-    df = df.append(edit, ignore_index=True)
+    df = df._append(edit, ignore_index=True)
     df = df.sort_values(by='ID', ascending=True)
     #df = df.drop(['index'],axis=1)
     df['Star Absorption'] = df['Star Absorption'].apply(pd.to_numeric)
@@ -91,7 +89,7 @@ def format_dataframe(stats_df,serv_df):
         stats_df = stats_df[stats_df['AKA'].str.isnumeric()!=True]
 
         # Append the modified dataframe with the original dataframe 
-        df2 = stats_df.append(temp_df)    
+        df2 = stats_df._append(temp_df)    
         
         # Convert text numbers to numeric data and sort values by ID
 
@@ -130,13 +128,13 @@ def format_dataframe(stats_df,serv_df):
         # Convert numeric text in dataframe to integer values
         numeric_lists = [
             'ATK at level 1','ATK at max Servant level','HP at level 1','HP at max Servant level',
-            'Grail ATK','Grail HP']
+            'Lvl 100 Grail ATK','Lvl 100 Grail HP', 'Lvl 120 Grail ATK','Lvl 120 Grail HP']
 
         for i in numeric_lists:
             new_df[i] = new_df[i].apply(lambda x: x.split()[0].replace(',',''))
             new_df[i] = new_df[i].apply(pd.to_numeric)
 
-        new_df = update_dual_values(new_df)
+        # new_df = update_dual_values(new_df)
 
         new_df = new_df[new_df['Class'] != 'Beast II']
         new_df = new_df[new_df['Servant Name'] != 'Solomon']
