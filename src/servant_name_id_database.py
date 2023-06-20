@@ -9,7 +9,7 @@ from tqdm import tqdm
 pd.options.mode.chained_assignment = None
 # Range of Servant IDs
 id_count = ['1-100','101-200','201-300','301-400']
-#id_count = ['1-100']
+# id_count = ['201-300']
 
 class ServantDB:
     
@@ -32,12 +32,13 @@ class ServantDB:
 
             # Targeting the table rows
             first = soup.find('div',{'id':'mw-content-text'})
-            f_rows = first.find_all('tr')[1:]
+            f_rows = first.find_all('tr')[2:]
     
             # Storing the name,rarity,id in their lists
             for i in f_rows:
 
                 data = i.find_all('td')
+
                 self.names.append(data[1].text.strip())
                 self.ids.append(data[3].text.strip())
                 self.rarities.append(data[2].text.strip())
@@ -50,7 +51,14 @@ class ServantDB:
         
         
         # Remove the non-playable servants from the dataframe 
-        df = df.query("ID not in ['151','152','168','240']")
+        df = df.query("ID not in ['83','149','151','152','168','240', '333']")
+        #  83 = Solomon (enemy)
+        # 149 = Tiamat AKA Beast II
+        # 151 = Goetia
+        # 152 = Solomon
+        # 168 = Beast III/R
+        # 240 = Beast III/L
+        # 333 = Beast IV/L
 
         # Replace the emoji-text in the Rarity column with the corr_rarity dict.
         temp_rarity = df['Rarity'].replace(corr_rarity)
